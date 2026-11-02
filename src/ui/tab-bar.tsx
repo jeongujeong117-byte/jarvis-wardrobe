@@ -1,16 +1,12 @@
-import type { LucideIcon } from 'lucide-react-native';
 import { Pressable, View } from 'react-native';
 import { StyleSheet } from 'react-native-unistyles';
 
-import { Icon } from './icon';
+import { PenDrawing } from './pen/pen-drawing';
 import { Text } from './text';
 
-export type TabItem<K extends string> = { key: K; label: string; icon: LucideIcon };
+export type TabItem<K extends string> = { key: K; label: string };
 
-/**
- * Segmented bottom tab (Clutter). Docked to the bottom edge — not floating —
- * so it respects the home indicator instead of hovering above it.
- */
+/** Words only; the current tab is underlined with a pen stroke. One hairline separates it from the page. */
 export function TabBar<K extends string>({
   items,
   active,
@@ -32,11 +28,13 @@ export function TabBar<K extends string>({
               accessibilityState={{ selected }}
               key={item.key}
               onPress={() => onChange(item.key)}
-              style={[styles.tab, selected && styles.tabActive]}>
-              <Icon icon={item.icon} size={20} tone={selected ? 'onInverse' : 'secondary'} />
-              <Text tone={selected ? 'onInverse' : 'secondary'} variant="label">
+              style={styles.tab}>
+              <Text tone={selected ? 'primary' : 'tertiary'} variant="label">
                 {item.label}
               </Text>
+              <View style={styles.mark}>
+                {selected ? <PenDrawing height="100%" name="swash" stretch viewBox="0 0 100 12" width="100%" /> : null}
+              </View>
             </Pressable>
           );
         })}
@@ -50,28 +48,20 @@ const styles = StyleSheet.create((theme, rt) => ({
     backgroundColor: theme.colors.surfaceBase,
     borderTopWidth: theme.stroke.hairline,
     borderTopColor: theme.colors.borderInteractive,
-    paddingTop: theme.space.sm,
     paddingBottom: Math.max(rt.insets.bottom, theme.space.sm),
-    paddingHorizontal: theme.space.xl,
   },
   track: {
     width: '100%',
     maxWidth: theme.layout.readable,
     alignSelf: 'center',
     flexDirection: 'row',
-    gap: theme.space.xs,
-    padding: theme.space.xs,
-    borderRadius: theme.radius.pill,
-    backgroundColor: theme.colors.surfaceRaised,
   },
   tab: {
     flex: 1,
-    minHeight: theme.touch.min,
-    flexDirection: 'row',
+    minHeight: 56,
     alignItems: 'center',
     justifyContent: 'center',
-    gap: theme.space.xs,
-    borderRadius: theme.radius.pill,
+    gap: 2,
   },
-  tabActive: { backgroundColor: theme.colors.inverse },
+  mark: { width: 44, height: 7 },
 }));

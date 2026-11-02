@@ -1,6 +1,6 @@
 # jarvis — UI 개편 프로젝트
 
-> 레포 루트 기준 문서. **방향 결정은 `docs/ui/01-brief.md` 10절(v2)이 우선**한다 — 특히 스타일링(unistyles), 폰트(Pretendard), 테마 4종, radius 4종.
+> 레포 루트 기준 문서. **방향 결정은 `docs/ui/06-modernist-analysis.md`(v3)가 우선**한다. 아래 3절(몬드리안)·테마 관련 내용은 v2 기록이다.
 
 이 저장소는 패션 앱 **자비스**(`app/`, github: jeongujeong117-byte/jarvis-wardrobe)의
 UI를 출시 수준으로 끌어올리기 위한 작업 공간이다.

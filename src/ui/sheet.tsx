@@ -18,6 +18,7 @@ export function Sheet({
   visible: boolean;
   onClose: () => void;
   title: string;
+  /** @deprecated eyebrow labels are not used in this design */
   caption?: string;
   children: ReactNode;
   footer?: ReactNode;
@@ -32,11 +33,6 @@ export function Sheet({
           <View style={styles.handle} />
           <View style={styles.header}>
             <View style={styles.headerText}>
-              {caption ? (
-                <Text tone="secondary" variant="caption">
-                  {caption}
-                </Text>
-              ) : null}
               <Text accessibilityRole="header" variant="heading">
                 {title}
               </Text>
@@ -64,9 +60,9 @@ const styles = StyleSheet.create((theme, rt) => ({
     maxWidth: theme.layout.readable,
     maxHeight: '92%',
     alignSelf: 'center',
-    backgroundColor: theme.colors.surfaceBase,
-    borderTopLeftRadius: theme.radius.card,
-    borderTopRightRadius: theme.radius.card,
+    backgroundColor: theme.colors.surfaceRaised,
+    borderTopLeftRadius: theme.radius.sheet,
+    borderTopRightRadius: theme.radius.sheet,
     paddingBottom: rt.insets.bottom + theme.space.lg,
   },
   handle: {
@@ -86,6 +82,6 @@ const styles = StyleSheet.create((theme, rt) => ({
     paddingTop: theme.space.md,
   },
   headerText: { flex: 1, gap: 2 },
-  body: { paddingHorizontal: theme.space.xl, paddingTop: theme.space.lg, gap: theme.space.xl },
+  body: { paddingHorizontal: theme.space.xl, paddingTop: theme.space.lg, gap: theme.space.xxl },
   footer: { paddingHorizontal: theme.space.xl, paddingTop: theme.space.lg, gap: theme.space.sm },
 }));

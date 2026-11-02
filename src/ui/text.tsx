@@ -4,13 +4,7 @@ import { StyleSheet } from 'react-native-unistyles';
 
 import type { TypeVariant } from '@/design/tokens';
 
-export type TextTone =
-  | 'primary'
-  | 'secondary'
-  | 'tertiary'
-  | 'accent'
-  | 'onAccent'
-  | 'onInverse';
+export type TextTone = 'primary' | 'secondary' | 'tertiary' | 'onAccent' | 'onInverse' | 'seal';
 
 type Props = RNTextProps & {
   variant?: TypeVariant;
@@ -29,21 +23,21 @@ const styles = StyleSheet.create((theme) => ({
   text: {
     variants: {
       variant: {
-        numeral: theme.type.numeral,
         display: theme.type.display,
         heading: theme.type.heading,
         title: theme.type.title,
         body: theme.type.body,
         label: theme.type.label,
         caption: theme.type.caption,
+        script: theme.type.script,
       },
       tone: {
         primary: { color: theme.colors.textPrimary },
         secondary: { color: theme.colors.textSecondary },
         tertiary: { color: theme.colors.textTertiary },
-        accent: { color: theme.colors.accentText },
         onAccent: { color: theme.colors.onAccent },
         onInverse: { color: theme.colors.onInverse },
+        seal: { color: theme.colors.seal },
       },
       align: {
         left: { textAlign: 'left' },

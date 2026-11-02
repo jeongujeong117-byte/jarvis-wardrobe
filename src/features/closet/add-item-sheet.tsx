@@ -4,9 +4,9 @@ import { StyleSheet } from 'react-native-unistyles';
 
 import type { Category, ClothingItem } from '@/data/wardrobe';
 import { Button } from '@/ui/button';
-import { Chip } from '@/ui/chip';
 import { Field } from '@/ui/field';
-import { GarmentField } from '@/ui/garment/garment-field';
+import { GarmentPlate } from '@/ui/pen/garment-plate';
+import { PenChoice, PenChoiceRow } from '@/ui/pen/pen-choice';
 import { Sheet } from '@/ui/sheet';
 import { Text } from '@/ui/text';
 
@@ -67,50 +67,49 @@ export function AddItemSheet({
 
   return (
     <Sheet
-      caption="직접 등록"
       footer={
-        <Button disabled={saving} label={saving ? '저장 중...' : '옷장에 저장하기'} onPress={save} />
+        <Button block disabled={saving} label={saving ? '저장 중...' : '옷장에 저장하기'} onPress={save} />
       }
       onClose={onClose}
       title="옷 등록하기"
       visible={visible}>
-      {/* Live preview: the garment as it will appear — a color field. */}
+      {/* Live preview: the garment as it will appear — plane and pen contour. */}
       <View style={styles.preview}>
         <View style={styles.previewField}>
-          <GarmentField glyphSize={40} item={{ category, colorHex: colorHex[color] ?? '#B6B0A4' }} />
+          <GarmentPlate id="add-preview" item={{ category, colorHex: colorHex[color] ?? '#B6B0A4' }} />
         </View>
         <View style={styles.previewText}>
           <Text numberOfLines={2} tone={name ? 'primary' : 'tertiary'} variant="title">
-            {name || '상품명을 입력하세요'}
+            {name || '이름을 적어주세요'}
           </Text>
           <Text tone="secondary" variant="caption">
-            {category} · {color}
+            {color} {category}
           </Text>
         </View>
       </View>
 
-      <Field label="상품명" onChangeText={setName} placeholder="예: 스트라이프 셔츠" value={name} />
+      <Field label="이름" onChangeText={setName} placeholder="예: 스트라이프 셔츠" value={name} />
 
       <View style={styles.group}>
         <Text tone="secondary" variant="label">
           카테고리
         </Text>
-        <View style={styles.chips}>
+        <PenChoiceRow>
           {categoryOptions.map((value) => (
-            <Chip key={value} label={value} onPress={() => setCategory(value)} selected={category === value} />
+            <PenChoice key={value} label={value} onPress={() => setCategory(value)} selected={category === value} />
           ))}
-        </View>
+        </PenChoiceRow>
       </View>
 
       <View style={styles.group}>
         <Text tone="secondary" variant="label">
           색상
         </Text>
-        <View style={styles.chips}>
+        <PenChoiceRow>
           {colorOptions.map((value) => (
-            <Chip key={value} label={value} onPress={() => setColor(value)} selected={color === value} />
+            <PenChoice key={value} label={value} onPress={() => setColor(value)} selected={color === value} />
           ))}
-        </View>
+        </PenChoiceRow>
       </View>
     </Sheet>
   );
@@ -118,8 +117,7 @@ export function AddItemSheet({
 
 const styles = StyleSheet.create((theme) => ({
   preview: { flexDirection: 'row', alignItems: 'center', gap: theme.space.lg },
-  previewField: { width: 88 },
+  previewField: { width: 104 },
   previewText: { flex: 1, gap: theme.space.xs },
   group: { gap: theme.space.sm },
-  chips: { flexDirection: 'row', flexWrap: 'wrap', gap: theme.space.sm },
 }));

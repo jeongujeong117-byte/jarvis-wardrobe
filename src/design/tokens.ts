@@ -1,85 +1,81 @@
 /**
- * Raw design tokens. Screens never import this file directly —
- * they read values through the unistyles theme (`theme.space`, `theme.type`, ...).
+ * Raw design tokens. Screens read these through the unistyles theme
+ * (`theme.space`, `theme.type`, ...), never by importing this file.
  *
- * Source of every decision: docs/ui/01-brief.md (v2, section 10).
+ * Direction: docs/ui/06-modernist-analysis.md — "structure by the machine, meaning by the hand".
+ * Grid, sans and flat color planes carry every function; the hand (script, fountain-pen
+ * drawing) appears only where a person should remember something.
  */
 import type { TextStyle } from 'react-native';
 
-/** 4pt grid. Audit found 20 marginTop / 14 paddingHorizontal values; all snap to these. */
+/** 4pt grid. Space is the main material of this design, so the top end is generous. */
 export const space = {
   xs: 4,
   sm: 8,
   md: 12,
   lg: 16,
-  xl: 20,
-  xxl: 24,
-  section: 32,
-  hero: 48,
+  xl: 24,
+  xxl: 32,
+  section: 48,
+  hero: 64,
 } as const;
 
 /**
- * Four radii by role (audit: 20 distinct values).
- * - none: garment color fields — Mondrian blocks, always square
- * - sm:   thumbnails, small badges
- * - card: summary cards, sheets, inputs (Clutter's soft containers)
- * - pill: buttons, chips, tabs
+ * Two shapes only:
+ * - none:  every color plane and garment — flat, square, modernist
+ * - pill:  the one primary action per screen
+ * Sheets use the platform's top rounding (sheet).
  */
 export const radius = {
   none: 0,
-  sm: 8,
-  card: 16,
+  sheet: 16,
   pill: 999,
 } as const;
 
-/** Line weights carry meaning, not decoration. */
 export const stroke = {
   hairline: 0.5,
   base: 1,
-  structural: 3,
-  emphasis: 2,
 } as const;
 
-/** Minimum touch target (iOS HIG 44pt / Material 48dp → 44 floor, buttons use 52). */
+/** Minimum touch target 44; the primary button 52. */
 export const touch = {
   min: 44,
   button: 52,
 } as const;
 
-/** Bundled Pretendard weights. Weight is set by family name, never by fontWeight. */
+/** Pretendard in two weights (the hierarchy comes from size and space, not weight),
+ *  plus one fountain-pen script reserved for the wordmark and the day's signature. */
 export const fontFamily = {
   regular: 'Pretendard-Regular',
   medium: 'Pretendard-Medium',
-  bold: 'Pretendard-Bold',
+  script: 'MrsSaintDelafield',
 } as const;
 
-/** Type scale: audit found 30 font sizes, 15 line heights, 6 weights → 7 styles, 3 weights. */
+/**
+ * Type roles. Ratio ≈1.2 between UI steps (Operate surface), one display step for headlines.
+ * `script` is decorative only — never used for information a person must read to act.
+ */
 export const type = {
-  numeral: { fontFamily: fontFamily.bold, fontSize: 56, lineHeight: 60, letterSpacing: -2 },
-  display: { fontFamily: fontFamily.bold, fontSize: 28, lineHeight: 36, letterSpacing: -0.8 },
-  heading: { fontFamily: fontFamily.bold, fontSize: 20, lineHeight: 28, letterSpacing: -0.4 },
-  title: { fontFamily: fontFamily.medium, fontSize: 17, lineHeight: 24, letterSpacing: -0.2 },
-  body: { fontFamily: fontFamily.regular, fontSize: 15, lineHeight: 22, letterSpacing: -0.1 },
+  display: { fontFamily: fontFamily.medium, fontSize: 30, lineHeight: 39, letterSpacing: -0.8 },
+  heading: { fontFamily: fontFamily.medium, fontSize: 20, lineHeight: 28, letterSpacing: -0.4 },
+  title: { fontFamily: fontFamily.medium, fontSize: 16, lineHeight: 22, letterSpacing: -0.2 },
+  body: { fontFamily: fontFamily.regular, fontSize: 15, lineHeight: 24, letterSpacing: -0.1 },
   label: { fontFamily: fontFamily.medium, fontSize: 14, lineHeight: 20, letterSpacing: -0.1 },
-  caption: { fontFamily: fontFamily.regular, fontSize: 12, lineHeight: 16, letterSpacing: 0 },
+  caption: { fontFamily: fontFamily.regular, fontSize: 12, lineHeight: 17, letterSpacing: 0 },
+  script: { fontFamily: fontFamily.script, fontSize: 40, lineHeight: 52, letterSpacing: 0 },
 } as const satisfies Record<string, TextStyle>;
 
 export type TypeVariant = keyof typeof type;
 
-/** One easing, three durations (brief 5-2: motion only in three places). */
+/** One easing family, three durations. Motion only answers a person's action. */
 export const motion = {
   fast: 150,
   base: 200,
   sheet: 250,
 } as const;
 
-/** Illustration-only colors (never text, never UI chrome). Mondrian's yellow block. */
-export const art = {
-  yellow: '#F2C200',
-} as const;
-
 /** Readable column widths for wide screens (web / tablet). */
 export const layout = {
-  readable: 640,
-  wide: 1040,
+  readable: 600,
+  wide: 1000,
 } as const;

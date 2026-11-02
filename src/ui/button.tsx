@@ -5,21 +5,9 @@ import { StyleSheet } from 'react-native-unistyles';
 import { Icon } from './icon';
 import { Text } from './text';
 
-type Props = {
-  label: string;
-  onPress: () => void;
-  variant?: 'primary' | 'secondary' | 'ghost';
-  icon?: LucideIcon;
-  disabled?: boolean;
-  /** Stretch to the parent's width (default) or hug the label. */
-  block?: boolean;
-  accessibilityHint?: string;
-};
-
 /**
- * primary   — the one action you can take now (accent; ≥5.2:1 in every theme)
- * secondary — an alternative (outlined with the ≥3:1 interactive border)
- * ghost     — a quiet escape hatch
+ * primary — the one action per screen: an ink pill
+ * text    — everything else: words only, no box
  */
 export function Button({
   label,
@@ -27,14 +15,19 @@ export function Button({
   variant = 'primary',
   icon,
   disabled = false,
-  block = true,
-  accessibilityHint,
-}: Props) {
+  block = false,
+}: {
+  label: string;
+  onPress: () => void;
+  variant?: 'primary' | 'text';
+  icon?: LucideIcon;
+  disabled?: boolean;
+  block?: boolean;
+}) {
   styles.useVariants({ variant, block });
   const tone = variant === 'primary' ? 'onAccent' : 'primary';
   return (
     <Pressable
-      accessibilityHint={accessibilityHint}
       accessibilityRole="button"
       accessibilityState={{ disabled }}
       disabled={disabled}
@@ -52,20 +45,20 @@ export function Button({
 
 const styles = StyleSheet.create((theme) => ({
   button: {
-    minHeight: theme.touch.button,
-    borderRadius: theme.radius.pill,
-    paddingHorizontal: theme.space.xxl,
     alignItems: 'center',
     justifyContent: 'center',
     variants: {
       variant: {
-        primary: { backgroundColor: theme.colors.accent },
-        secondary: {
-          backgroundColor: 'transparent',
-          borderWidth: theme.stroke.base,
-          borderColor: theme.colors.borderInteractive,
+        primary: {
+          minHeight: theme.touch.button,
+          paddingHorizontal: theme.space.xl + theme.space.xs,
+          borderRadius: theme.radius.pill,
+          backgroundColor: theme.colors.accent,
         },
-        ghost: { backgroundColor: 'transparent' },
+        text: {
+          minHeight: theme.touch.min,
+          paddingHorizontal: theme.space.sm,
+        },
       },
       block: {
         true: { alignSelf: 'stretch' },
@@ -73,11 +66,7 @@ const styles = StyleSheet.create((theme) => ({
       },
     },
   },
-  content: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: theme.space.sm,
-  },
-  pressed: { opacity: 0.8 },
-  disabled: { opacity: 0.4 },
+  content: { flexDirection: 'row', alignItems: 'center', gap: theme.space.sm },
+  pressed: { opacity: 0.7 },
+  disabled: { opacity: 0.35 },
 }));

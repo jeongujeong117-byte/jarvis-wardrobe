@@ -67,7 +67,7 @@ const styles = StyleSheet.create((theme, rt) => ({
     width: '100%',
     alignSelf: 'center',
     paddingHorizontal: theme.space.xl,
-    paddingTop: theme.space.sm,
+    paddingTop: theme.space.lg,
     paddingBottom: theme.space.hero,
     variants: {
       width: {

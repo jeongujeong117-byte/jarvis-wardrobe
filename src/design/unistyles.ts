@@ -18,7 +18,7 @@ StyleSheet.configure({
   themes: appThemes,
   breakpoints,
   settings: {
-    // Follow the OS light/dark setting until the user picks a theme (see theme-preference.ts).
+    // Paper by day, night by night — follows the OS setting.
     adaptiveThemes: true,
   },
 });

@@ -5,8 +5,6 @@ import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
 import { useUnistyles } from 'react-native-unistyles';
 
-import { applyThemePreference, loadThemePreference } from '@/design/theme-preference';
-
 SplashScreen.preventAutoHideAsync().catch(() => {});
 
 export default function RootLayout() {
@@ -14,12 +12,8 @@ export default function RootLayout() {
   const [fontsLoaded, fontError] = useFonts({
     'Pretendard-Regular': require('../../assets/fonts/Pretendard-Regular.otf'),
     'Pretendard-Medium': require('../../assets/fonts/Pretendard-Medium.otf'),
-    'Pretendard-Bold': require('../../assets/fonts/Pretendard-Bold.otf'),
+    MrsSaintDelafield: require('../../assets/fonts/MrsSaintDelafield-Regular.ttf'),
   });
-
-  useEffect(() => {
-    loadThemePreference().then(applyThemePreference);
-  }, []);
 
   const ready = fontsLoaded || fontError !== null;
 

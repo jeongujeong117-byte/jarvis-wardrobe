@@ -1,13 +1,11 @@
-import { Database } from 'lucide-react-native';
 import { useState } from 'react';
 import { Alert, View } from 'react-native';
 import { StyleSheet } from 'react-native-unistyles';
 
 import { isSupabaseConfigured, supabase } from '@/lib/supabase';
 import { Button } from '@/ui/button';
-import { Chip } from '@/ui/chip';
 import { Field } from '@/ui/field';
-import { Icon } from '@/ui/icon';
+import { PenChoice, PenChoiceRow } from '@/ui/pen/pen-choice';
 import { Sheet } from '@/ui/sheet';
 import { Text } from '@/ui/text';
 
@@ -73,13 +71,11 @@ export function AuthSheet({
   if (!isSupabaseConfigured) {
     return (
       <Sheet
-        caption="자비스 계정"
-        footer={<Button label="확인" onPress={onClose} />}
+        footer={<Button block label="확인" onPress={onClose} />}
         onClose={onClose}
         title="옷장 데이터 연결"
         visible={visible}>
         <View style={styles.setup}>
-          <Icon icon={Database} size={28} />
           <Text variant="title">Supabase 프로젝트 정보가 필요해요</Text>
           <Text tone="secondary" variant="body">
             프로젝트 루트의 .env 파일에 Project URL과 Publishable key를 입력한 뒤 앱을 다시 실행해주세요.
@@ -91,9 +87,9 @@ export function AuthSheet({
 
   return (
     <Sheet
-      caption="자비스 계정"
       footer={
         <Button
+          block
           disabled={submitting}
           label={submitting ? '처리 중...' : mode === 'sign-in' ? '로그인하기' : '가입하기'}
           onPress={submit}
@@ -102,10 +98,10 @@ export function AuthSheet({
       onClose={onClose}
       title="옷장 데이터 연결"
       visible={visible}>
-      <View accessibilityRole="tablist" style={styles.modes}>
-        <Chip label="로그인" onPress={() => setMode('sign-in')} selected={mode === 'sign-in'} />
-        <Chip label="회원가입" onPress={() => setMode('sign-up')} selected={mode === 'sign-up'} />
-      </View>
+      <PenChoiceRow>
+        <PenChoice label="로그인" onPress={() => setMode('sign-in')} selected={mode === 'sign-in'} />
+        <PenChoice label="회원가입" onPress={() => setMode('sign-up')} selected={mode === 'sign-up'} />
+      </PenChoiceRow>
 
       <Field
         autoCapitalize="none"
@@ -137,5 +133,4 @@ export function AuthSheet({
 
 const styles = StyleSheet.create((theme) => ({
   setup: { gap: theme.space.md },
-  modes: { flexDirection: 'row', gap: theme.space.sm },
 }));

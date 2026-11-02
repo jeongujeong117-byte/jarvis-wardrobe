@@ -1,26 +1,25 @@
 # 03 — 토큰 대응표 (감사 대비)
 
-측정: `python3 -I tools/design/audit_inventory.py src` — 개편 전(master)과 동일 스크립트.
+측정: `python3 -I tools/design/audit_inventory.py src` (개편 전 master와 같은 스크립트).
+현재 방향: **v3 모더니즘 × 만년필** (`06-modernist-analysis.md`).
 
-| 속성 | 개편 전 | 개편 후 | 위치 |
+| 속성 | 개편 전 | v3 | 위치 |
 |---|---:|---:|---|
-| `fontSize` 서로 다른 값 | **30** | **7** | 전부 `src/design/tokens.ts`의 `type` 스케일 |
-| `lineHeight` | 15 | 7 | 위와 동일 (size와 한 묶음) |
-| `fontWeight` | 6 | **0** | 굵기는 Pretendard 패밀리명으로만 지정 (Regular/Medium/Bold 3종) |
-| `borderRadius` 숫자 리터럴 | **20** | **0** | 전부 `theme.radius.{none,sm,card,pill}` 4종 |
-| `marginTop` / `paddingHorizontal` / `gap` 리터럴 | 20 / 14 / 11 | 0 / 0 / 1 | 전부 `theme.space` 8단계 (4pt 그리드) |
-| UI 색 리터럴 (테마·옷 데이터 제외) | **66** 떠돌이 | **0** | 테마 4종은 `src/design/themes.ts`, 옷 색은 데이터 |
-| 그라디언트·그림자 | 4 / 다수 | **0** | 납작한 면 원칙 |
-| 이모지 아이콘 | 렌더링됨 | **0** | lucide + 자체 단선 카테고리 그림 |
-| 화면 파일 | 1개 1,357줄 | 화면 11 + UI 키트 16 파일 | `src/features/`, `src/ui/` |
+| `fontSize` 종류 | **30** | 10 (토큰 7 + 아래 예외 3) | `src/design/tokens.ts` `type` |
+| `fontWeight` 리터럴 | 6종 73회 | **0** | 굵기는 패밀리로: Pretendard Regular·Medium 2종 + 필기체 1종 |
+| `borderRadius` 리터럴 | **20** | **0** | `radius.none`(모든 색면)·`sheet`·`pill`(주요 버튼) 3종 |
+| 간격 리터럴 | 수십 종 | `gap: 2` 하나 | `theme.space` 8단계 |
+| UI 색 리터럴 (옷 데이터 제외) | **66** | **0** | 테마 2종(종이·밤)은 `themes.ts`, 펜 일러스트 색도 테마 잉크 |
+| 그라디언트·그림자 | 4 / 다수 | **0** | |
+| 테마 | 1 (다크 미동작) | 2 (시스템 따라감) | v2의 4종 선택 기능은 제거 |
 
-## 남은 리터럴 (의도적)
+## 예외 리터럴 (의도적)
 
-- `gap: 2` — 텍스트 2줄 사이 미세 간격 (4pt 그리드 미만, 시각 보정). 토큰화 후보.
-- 옷 색(`colorHex`) — 데이터. 테마와 무관하게 옷 그대로 보여야 하므로 토큰이 아니다.
-- `art.yellow` — 일러스트 전용, 텍스트·UI에 쓰지 않음.
+- `Wordmark` 38 / 72pt — 필기체 이름은 화면 크기별 두 크기만. 토큰화 후보
+- `Field` 입력 글자 17pt — iOS에서 16pt 미만이면 입력 시 화면이 확대되는 것을 막는 값
+- `gap: 2` — 두 줄 텍스트 사이 시각 보정
 
-## 죽은 코드 처리
+## 펜 드로잉
 
-`src/constants/theme.ts`, `src/hooks/use-theme.ts`, Expo 템플릿 컴포넌트 9개, `src/global.css`는
-앱 화면에서 import되지 않던 코드라 **삭제**했다. 토큰은 `src/design/`이 유일한 출처다.
+`src/design/pen-drawings.ts`는 **생성물**이다. 직접 고치지 말고 `tools/design/pen.py`의 중심선을 고친 뒤
+`python3 -I tools/design/pen.py src/design/pen-drawings.ts`로 다시 만든다.

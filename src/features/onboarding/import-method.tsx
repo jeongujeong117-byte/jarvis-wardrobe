@@ -1,4 +1,4 @@
-import { Camera, ChevronLeft, ChevronRight, Info, Mail, PenLine } from 'lucide-react-native';
+import { ChevronLeft, ChevronRight } from 'lucide-react-native';
 import { View } from 'react-native';
 import { StyleSheet } from 'react-native-unistyles';
 
@@ -25,54 +25,42 @@ export function ImportScreen({
       <BackBar backIcon={ChevronLeft} onBack={onBack} title="옷 가져오기" />
       <ScreenScroll>
         <View style={styles.intro}>
-          <Text tone="secondary" variant="label">
-            1단계 · 옷장 채우기
-          </Text>
           <Text accessibilityRole="header" variant="display">
-            내 옷장을{'\n'}어떻게 채울까요?
+            옷장을 어떻게{'\n'}채울까요?
           </Text>
           <Text tone="secondary" variant="body">
-            가장 편한 방법을 고르세요. 나중에 다른 방법으로 더할 수 있어요.
+            편한 방법으로 시작하세요. 다른 방법은 나중에 더해도 돼요.
           </Text>
         </View>
-
         <ListGroup>
           <ListRow
-            description="무신사 주문메일을 찾아 자동으로 가져와요 · 추천"
-            icon={Mail}
+            description="무신사 주문메일에서 산 옷을 찾아 가져와요. 가장 빨라요."
             onPress={onGmail}
-            title="Gmail 연결하기"
+            title="Gmail에서 가져오기"
             trailing={chevron}
           />
           <ListRow
-            description="주문 화면을 캡처해서 빠르게 등록해요"
-            icon={Camera}
+            description="주문 내역 화면을 캡처해 등록해요."
             onPress={onCapture}
-            title="주문내역 캡처하기"
+            title="주문 캡처로 가져오기"
             trailing={chevron}
           />
           <ListRow
-            description="상품명과 카테고리만 간단히 입력해요"
-            icon={PenLine}
+            description="이름과 종류, 색만 적으면 돼요."
             onPress={onManual}
-            title="직접 등록하기"
+            title="직접 적기"
             trailing={chevron}
           />
         </ListGroup>
-
-        <View style={styles.note}>
-          <Icon icon={Info} size={18} tone="secondary" />
-          <Text style={styles.noteText} tone="secondary" variant="caption">
-            Gmail 연결을 건너뛰어도 앱의 모든 기능을 이용할 수 있어요.
-          </Text>
-        </View>
+        <Text style={styles.note} tone="tertiary" variant="caption">
+          Gmail을 연결하지 않아도 모든 기능을 쓸 수 있어요.
+        </Text>
       </ScreenScroll>
     </Screen>
   );
 }
 
 const styles = StyleSheet.create((theme) => ({
-  intro: { gap: theme.space.md, paddingTop: theme.space.lg },
-  note: { flexDirection: 'row', gap: theme.space.sm, marginTop: theme.space.xxl, paddingHorizontal: theme.space.xs },
-  noteText: { flex: 1 },
+  intro: { gap: theme.space.md },
+  note: { marginTop: theme.space.xl },
 }));

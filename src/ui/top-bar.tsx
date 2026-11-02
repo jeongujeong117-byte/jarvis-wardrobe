@@ -56,6 +56,7 @@ const styles = StyleSheet.create((theme) => ({
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: theme.space.xl,
+    paddingTop: theme.space.sm,
     variants: {
       width: {
         readable: { maxWidth: theme.layout.readable },

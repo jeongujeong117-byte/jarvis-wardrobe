@@ -2,7 +2,6 @@
  * App shell. State and handlers are carried over unchanged from the former
  * wardrobe-prototype.tsx — this redesign changes presentation only.
  */
-import { LayoutGrid, Sun, UserRound } from 'lucide-react-native';
 import { useEffect, useState } from 'react';
 import { Alert, View } from 'react-native';
 import { StyleSheet } from 'react-native-unistyles';
@@ -28,9 +27,9 @@ import { WelcomeScreen } from './onboarding/welcome';
 import type { DataStatus, FlowScreen, MainTab } from './types';
 
 const tabs: TabItem<MainTab>[] = [
-  { key: 'today', label: '오늘', icon: Sun },
-  { key: 'closet', label: '옷장', icon: LayoutGrid },
-  { key: 'my', label: '마이', icon: UserRound },
+  { key: 'today', label: '오늘' },
+  { key: 'closet', label: '옷장' },
+  { key: 'my', label: '마이' },
 ];
 
 export function JarvisApp() {
