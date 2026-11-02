@@ -1,5 +1,5 @@
-import { WardrobePrototype } from '@/components/wardrobe-prototype';
+import { JarvisApp } from '@/features/jarvis-app';
 
 export default function HomeScreen() {
-  return <WardrobePrototype />;
+  return <JarvisApp />;
 }
