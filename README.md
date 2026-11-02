@@ -19,16 +19,22 @@
 
 ## 실행하기
 
-Node.js가 설치된 PC에서 아래 명령을 실행합니다.
+> **Expo Go로는 더 이상 열리지 않습니다.** UI 개편에서 도입한 스타일 엔진(react-native-unistyles)이
+> 네이티브 코드를 포함하기 때문입니다. 개발 빌드로 실행합니다.
 
 ```powershell
 cd "C:\Users\jeong\Desktop\ai 활용\wardrobe-app"
 npm install
-npm start
+
+# 브라우저 (가장 빠른 확인)
+npm run web
+
+# 휴대폰 — 개발 빌드 (최초 1회 빌드, 이후 코드 변경은 바로 반영)
+npx expo run:android   # Android 기기/에뮬레이터
+npx expo run:ios       # macOS + Xcode 필요
 ```
 
-- 휴대폰: Expo Go 앱으로 터미널의 QR 코드를 스캔합니다.
-- 브라우저: 실행 중 터미널에서 `w`를 누릅니다.
+iOS를 Mac 없이 빌드하려면 EAS Build(`npx eas build --profile development`)를 사용합니다.
 
 ## Supabase 연결하기
 
@@ -65,8 +71,11 @@ EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY=YOUR_PUBLISHABLE_KEY
 
 ## 주요 파일
 
-- `src/components/wardrobe-prototype.tsx`: 전체 화면과 상호작용
-- `src/components/auth-modal.tsx`: 회원가입·로그인 화면
+- `src/features/jarvis-app.tsx`: 앱 상태와 화면 전환 (기능 로직)
+- `src/features/`: 화면별 파일 (온보딩·오늘·옷장·마이·등록·로그인)
+- `src/ui/`: 공용 UI 부품 (글자·버튼·칩·시트·옷 색면 등)
+- `src/design/`: 디자인 토큰·테마 4종·색 대비 계산
+- `docs/ui/`: UI 개편 감사·방향·검증 기록
 - `src/data/wardrobe.ts`: 샘플 옷 데이터와 분류 정보
 - `src/lib/supabase.ts`: Supabase 클라이언트와 로그인 세션 저장
 - `src/services/clothing-items.ts`: 옷 저장·조회 데이터 계층
