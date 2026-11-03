@@ -67,7 +67,7 @@ export function ListRow({
 const styles = StyleSheet.create((theme) => ({
   section: { marginTop: theme.space.section },
   title: { marginBottom: theme.space.md },
-  rule: { height: theme.stroke.hairline, backgroundColor: theme.colors.borderInteractive },
+  rule: { height: theme.space.xs },
   row: {
     minHeight: 64,
     flexDirection: 'row',

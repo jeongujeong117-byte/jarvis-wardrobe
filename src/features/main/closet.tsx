@@ -1,14 +1,13 @@
 import { Plus } from 'lucide-react-native';
 import { useMemo } from 'react';
-import { Alert, Pressable, View } from 'react-native';
+import { Pressable, View } from 'react-native';
 import { StyleSheet } from 'react-native-unistyles';
 
-import { categories, type ClothingItem, sourceLabels } from '@/data/wardrobe';
+import { categories, type ClothingItem } from '@/data/wardrobe';
 import { Button } from '@/ui/button';
 import { IconButton } from '@/ui/icon-button';
-import { GarmentPlate } from '@/ui/pen/garment-plate';
+import { ItemPhoto } from '@/ui/item-photo';
 import { PenChoice, PenChoiceRow } from '@/ui/pen/pen-choice';
-import { PenDrawing } from '@/ui/pen/pen-drawing';
 import { ScreenScroll } from '@/ui/screen';
 import { Text } from '@/ui/text';
 import { TopBar } from '@/ui/top-bar';
@@ -20,12 +19,14 @@ export function ClosetScreen({
   setFilter,
   onAdd,
   onImport,
+  onOpenItem,
 }: {
   items: ClothingItem[];
   filter: (typeof categories)[number];
   setFilter: (value: (typeof categories)[number]) => void;
   onAdd: () => void;
   onImport: () => void;
+  onOpenItem: (id: string) => void;
 }) {
   const filteredItems = useMemo(
     () => (filter === '전체' ? items : items.filter((item) => item.category === filter)),
@@ -46,7 +47,6 @@ export function ClosetScreen({
 
         {items.length === 0 ? (
           <View style={styles.empty}>
-            <PenDrawing name="hanger" size={160} />
             <Text tone="secondary" variant="body">
               Gmail 주문메일이나 주문 캡처에서 옷을 가져와보세요.
             </Text>
@@ -77,11 +77,9 @@ export function ClosetScreen({
                     accessibilityHint="자세히 보기"
                     accessibilityLabel={`${item.name}, ${item.color} ${item.category}`}
                     accessibilityRole="button"
-                    onPress={() =>
-                      Alert.alert(item.name, `${item.detail}\n${sourceLabels[item.source]}로 등록됨`)
-                    }
+                    onPress={() => onOpenItem(item.id)}
                     style={({ pressed }) => [styles.tile, pressed && styles.tilePressed]}>
-                    <GarmentPlate id={`closet-${item.id}`} item={item} />
+                    <ItemPhoto item={item} ratio={1.25} />
                     <View style={styles.tileText}>
                       <Text numberOfLines={2} variant="label">
                         {item.name}
@@ -119,11 +117,11 @@ const styles = StyleSheet.create((theme) => ({
     flexDirection: 'row',
     flexWrap: 'wrap',
     marginTop: theme.space.xl,
-    marginHorizontal: -theme.space.md,
-    rowGap: theme.space.xxl,
+    marginHorizontal: -theme.space.xs,
+    rowGap: theme.space.xl,
   },
   cell: {
-    paddingHorizontal: theme.space.md,
+    paddingHorizontal: theme.space.xs,
     width: { xs: '50%', sm: '33.333%', md: '25%' },
   },
   tile: { gap: theme.space.md },

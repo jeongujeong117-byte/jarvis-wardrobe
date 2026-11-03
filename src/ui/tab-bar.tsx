@@ -1,12 +1,11 @@
 import { Pressable, View } from 'react-native';
 import { StyleSheet } from 'react-native-unistyles';
 
-import { PenDrawing } from './pen/pen-drawing';
 import { Text } from './text';
 
 export type TabItem<K extends string> = { key: K; label: string };
 
-/** Words only; the current tab is underlined with a pen stroke. One hairline separates it from the page. */
+/** Words only. The current tab is a solid ink rectangle; no line, no stroke, no rounding. */
 export function TabBar<K extends string>({
   items,
   active,
@@ -28,13 +27,10 @@ export function TabBar<K extends string>({
               accessibilityState={{ selected }}
               key={item.key}
               onPress={() => onChange(item.key)}
-              style={styles.tab}>
-              <Text tone={selected ? 'primary' : 'tertiary'} variant="label">
+              style={[styles.tab, selected && styles.tabOn]}>
+              <Text tone={selected ? 'onAccent' : 'secondary'} variant="label">
                 {item.label}
               </Text>
-              <View style={styles.mark}>
-                {selected ? <PenDrawing height="100%" name="swash" stretch viewBox="0 0 100 12" width="100%" /> : null}
-              </View>
             </Pressable>
           );
         })}
@@ -46,22 +42,22 @@ export function TabBar<K extends string>({
 const styles = StyleSheet.create((theme, rt) => ({
   bar: {
     backgroundColor: theme.colors.surfaceBase,
-    borderTopWidth: theme.stroke.hairline,
-    borderTopColor: theme.colors.borderInteractive,
     paddingBottom: Math.max(rt.insets.bottom, theme.space.sm),
+    paddingTop: theme.space.sm,
   },
   track: {
     width: '100%',
     maxWidth: theme.layout.readable,
     alignSelf: 'center',
     flexDirection: 'row',
+    paddingHorizontal: theme.space.xl,
+    gap: theme.space.xs,
   },
   tab: {
     flex: 1,
-    minHeight: 56,
+    minHeight: theme.touch.min,
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 2,
   },
-  mark: { width: 44, height: 7 },
+  tabOn: { backgroundColor: theme.colors.accent },
 }));

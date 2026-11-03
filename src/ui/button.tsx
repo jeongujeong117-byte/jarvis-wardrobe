@@ -6,7 +6,7 @@ import { Icon } from './icon';
 import { Text } from './text';
 
 /**
- * primary — the one action per screen: an ink pill
+ * primary — the one action per screen: a solid ink rectangle (no corners, no stroke)
  * text    — everything else: words only, no box
  */
 export function Button({
@@ -19,13 +19,14 @@ export function Button({
 }: {
   label: string;
   onPress: () => void;
-  variant?: 'primary' | 'text';
+  variant?: 'primary' | 'quiet' | 'text';
   icon?: LucideIcon;
   disabled?: boolean;
   block?: boolean;
 }) {
   styles.useVariants({ variant, block });
   const tone = variant === 'primary' ? 'onAccent' : 'primary';
+  // quiet = the same rectangle after the action is done: tinted, ink text, still tappable (undo).
   return (
     <Pressable
       accessibilityRole="button"
@@ -52,8 +53,13 @@ const styles = StyleSheet.create((theme) => ({
         primary: {
           minHeight: theme.touch.button,
           paddingHorizontal: theme.space.xl + theme.space.xs,
-          borderRadius: theme.radius.pill,
           backgroundColor: theme.colors.accent,
+        },
+        quiet: {
+          minHeight: theme.touch.button,
+          paddingHorizontal: theme.space.xl + theme.space.xs,
+          // Sunken is too close to the page in dark mode, so night uses the raised surface.
+          backgroundColor: theme.isDark ? theme.colors.surfaceRaised : theme.colors.surfaceSunken,
         },
         text: {
           minHeight: theme.touch.min,

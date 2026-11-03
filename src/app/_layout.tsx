@@ -1,3 +1,4 @@
+import { BodoniModa_700Bold } from '@expo-google-fonts/bodoni-moda';
 import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
@@ -13,6 +14,7 @@ export default function RootLayout() {
     'Pretendard-Regular': require('../../assets/fonts/Pretendard-Regular.otf'),
     'Pretendard-Medium': require('../../assets/fonts/Pretendard-Medium.otf'),
     MrsSaintDelafield: require('../../assets/fonts/MrsSaintDelafield-Regular.ttf'),
+    'BodoniModa-Bold': BodoniModa_700Bold,
   });
 
   const ready = fontsLoaded || fontError !== null;

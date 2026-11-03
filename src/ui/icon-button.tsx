@@ -29,7 +29,6 @@ const styles = StyleSheet.create((theme) => ({
   button: {
     width: theme.touch.min,
     height: theme.touch.min,
-    borderRadius: theme.radius.pill,
     alignItems: 'center',
     justifyContent: 'center',
     variants: {

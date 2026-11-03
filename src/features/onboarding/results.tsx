@@ -1,11 +1,11 @@
-import { ChevronLeft } from 'lucide-react-native';
+import { Check, ChevronLeft } from 'lucide-react-native';
 import { Pressable, View } from 'react-native';
 import { StyleSheet } from 'react-native-unistyles';
 
 import type { ClothingItem } from '@/data/wardrobe';
 import { Button } from '@/ui/button';
-import { GarmentPlate } from '@/ui/pen/garment-plate';
-import { PenDrawing } from '@/ui/pen/pen-drawing';
+import { Icon } from '@/ui/icon';
+import { ItemPhoto } from '@/ui/item-photo';
 import { Screen, ScreenScroll } from '@/ui/screen';
 import { Text } from '@/ui/text';
 import { BackBar } from '@/ui/top-bar';
@@ -48,7 +48,7 @@ export function ResultsScreen({
                 onPress={() => onToggle(item.id)}
                 style={({ pressed }) => [styles.row, pressed && styles.rowPressed]}>
                 <View style={styles.thumb}>
-                  <GarmentPlate id={`result-${item.id}`} item={item} />
+                  <ItemPhoto item={item} ratio={1.25} />
                 </View>
                 <View style={styles.rowText}>
                   <Text numberOfLines={1} variant="title">
@@ -59,7 +59,7 @@ export function ResultsScreen({
                   </Text>
                 </View>
                 <View style={[styles.box, selected && styles.boxOn]}>
-                  {selected ? <PenDrawing name="tick" size={22} /> : null}
+                  {selected ? <Icon icon={Check} size={20} tone="onAccent" /> : null}
                 </View>
               </Pressable>
             );
@@ -96,10 +96,9 @@ const styles = StyleSheet.create((theme) => ({
     height: 30,
     alignItems: 'center',
     justifyContent: 'center',
-    borderWidth: theme.stroke.base,
-    borderColor: theme.colors.borderInteractive,
+    backgroundColor: theme.colors.surfaceSunken,
   },
-  boxOn: { borderColor: theme.colors.textPrimary },
+  boxOn: { backgroundColor: theme.colors.accent },
   footer: {
     width: '100%',
     maxWidth: theme.layout.readable,

@@ -30,6 +30,7 @@ const styles = StyleSheet.create((theme) => ({
         label: theme.type.label,
         caption: theme.type.caption,
         script: theme.type.script,
+        masthead: theme.type.masthead,
       },
       tone: {
         primary: { color: theme.colors.textPrimary },

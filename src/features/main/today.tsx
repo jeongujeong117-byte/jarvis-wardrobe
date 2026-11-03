@@ -1,41 +1,51 @@
-import { View } from 'react-native';
-import Animated, { FadeIn } from 'react-native-reanimated';
+import { ChevronDown } from 'lucide-react-native';
+import { useState } from 'react';
+import { Alert, Pressable, View } from 'react-native';
 import { StyleSheet } from 'react-native-unistyles';
 
+import { type PhotoMode, photoModes } from '@/data/photos';
 import type { ClothingItem } from '@/data/wardrobe';
 import { Button } from '@/ui/button';
-import { OutfitSketch } from '@/ui/pen/outfit-sketch';
-import { PenChoice, PenChoiceRow } from '@/ui/pen/pen-choice';
-import { PenDrawing } from '@/ui/pen/pen-drawing';
-import { ScreenScroll } from '@/ui/screen';
+import { Icon } from '@/ui/icon';
+import { Sheet } from '@/ui/sheet';
 import { Text } from '@/ui/text';
 import { TopBar } from '@/ui/top-bar';
 import { Wordmark } from '@/ui/wordmark';
 
+import { ItemInfoSheet } from './item-info-sheet';
+import { OutfitStage } from './outfit-stage';
+
 const occasions = ['일상', '출근', '약속', '운동'];
-const weekdays = ['월', '화', '수', '목', '금'];
 
 export function TodayScreen({
   items,
   outfitIndex,
-  setOutfitIndex,
+  onOtherOutfit,
   tpo,
   setTpo,
-  wearCount,
+  worn,
   onWear,
+  onUnwear,
   onImport,
   onOpenCloset,
+  onOpenItem,
 }: {
   items: ClothingItem[];
   outfitIndex: number;
-  setOutfitIndex: (value: number) => void;
+  onOtherOutfit: () => void;
   tpo: string;
   setTpo: (value: string) => void;
-  wearCount: number;
+  worn: boolean;
   onWear: () => void;
+  onUnwear: () => void;
   onImport: () => void;
   onOpenCloset: () => void;
+  onOpenItem: (id: string) => void;
 }) {
+  const [mode, setMode] = useState<PhotoMode>('flatlay');
+  const [showOccasions, setShowOccasions] = useState(false);
+  const [pickedItem, setPickedItem] = useState<ClothingItem | null>(null);
+
   // Selection rules unchanged from the prototype.
   const tops = items.filter((item) => item.category === '상의');
   const bottoms = items.filter((item) => item.category === '하의');
@@ -44,6 +54,13 @@ export function TodayScreen({
   const ready = tops.length > 0 && bottoms.length > 0;
   const top = ready ? tops[outfitIndex % tops.length] : undefined;
   const bottom = ready ? bottoms[(outfitIndex + 1) % bottoms.length] : undefined;
+
+  const modeIndex = photoModes.findIndex((entry) => entry.key === mode);
+  const modeLabel = photoModes[modeIndex]?.label ?? '';
+  const nextMode = photoModes[(modeIndex + 1) % photoModes.length];
+
+  const pickMyPhoto = () =>
+    Alert.alert('데모 안내', '내 사진 고르기는 PLUS 기능이에요. 실제 연결은 다음 단계에서 해요.');
 
   return (
     <>
@@ -55,96 +72,137 @@ export function TodayScreen({
           </Text>
         }
       />
-      <ScreenScroll>
-        <Text accessibilityRole="header" variant="display">
-          오늘은 가볍게,{'\n'}저녁엔 한 겹 더.
-        </Text>
 
-        <View accessibilityLabel="오늘의 일정" style={styles.choices}>
-          <PenChoiceRow>
-            {occasions.map((value) => (
-              <PenChoice key={value} label={value} onPress={() => setTpo(value)} selected={tpo === value} />
-            ))}
-          </PenChoiceRow>
+      {ready && top && bottom ? (
+        <View style={styles.fill}>
+          <View style={styles.controls}>
+            <Pressable
+              accessibilityLabel={`오늘의 일정 ${tpo}, 바꾸기`}
+              accessibilityRole="button"
+              onPress={() => setShowOccasions(true)}
+              style={styles.control}>
+              <Text variant="label">{tpo}</Text>
+              <Icon icon={ChevronDown} size={18} />
+            </Pressable>
+            <Pressable
+              accessibilityLabel={`사진 보기 ${modeLabel}, ${nextMode?.label ?? ''}(으)로 넘기기`}
+              accessibilityRole="button"
+              onPress={() => nextMode && setMode(nextMode.key)}
+              style={styles.control}>
+              <Text variant="label">
+                {modeLabel} · {modeIndex + 1}/{photoModes.length}
+              </Text>
+              <View style={styles.pips}>
+                {photoModes.map((entry) => (
+                  <View key={entry.key} style={[styles.pip, entry.key === mode && styles.pipOn]} />
+                ))}
+              </View>
+            </Pressable>
+          </View>
+
+          <OutfitStage
+            bottom={bottom}
+            mode={mode}
+            onModeChange={setMode}
+            onPickItem={setPickedItem}
+            onPickMyPhoto={pickMyPhoto}
+            pieces={[top, bottom, outer, shoes].filter((piece): piece is ClothingItem => Boolean(piece))}
+            top={top}
+          />
+
+          <Text accessibilityRole="header" numberOfLines={1} style={styles.headline} variant="heading">
+            오늘은 가볍게.
+          </Text>
+
+          <View style={styles.actionBar}>
+            <View style={styles.primary}>
+              {worn ? (
+                <Button block label="오늘 입는 중 · 취소" onPress={onUnwear} variant="quiet" />
+              ) : (
+                <Button block label="이 코디 입기" onPress={onWear} />
+              )}
+            </View>
+            <Button label="다른 코디" onPress={onOtherOutfit} variant="text" />
+          </View>
         </View>
+      ) : (
+        <View style={styles.empty}>
+          <Text accessibilityRole="header" variant="display">
+            코디를 만들 옷이{'\n'}아직 부족해요.
+          </Text>
+          <Text tone="secondary" variant="body">
+            상의와 하의를 한 벌씩 더하면 바로 골라드릴게요.
+          </Text>
+          <View style={styles.emptyActions}>
+            <Button label="옷 가져오기" onPress={onImport} />
+            <Button label="옷장 보기" onPress={onOpenCloset} variant="text" />
+          </View>
+        </View>
+      )}
 
-        {ready && top && bottom ? (
-          <View style={styles.outfit}>
-            <Animated.View entering={FadeIn.duration(200)} key={`${top.id}-${bottom.id}`}>
-              <OutfitSketch bottom={bottom} outer={outer} shoes={shoes} signature="Thursday" top={top} />
-            </Animated.View>
-            <View style={styles.caption}>
-              <Text variant="title">
-                {top.name}에 {bottom.name}
+      <Sheet onClose={() => setShowOccasions(false)} title="오늘의 일정" visible={showOccasions}>
+        <View style={styles.options}>
+          {occasions.map((value) => (
+            <Pressable
+              accessibilityRole="button"
+              accessibilityState={{ selected: tpo === value }}
+              key={value}
+              onPress={() => {
+                setTpo(value);
+                setShowOccasions(false);
+              }}
+              style={[styles.option, tpo === value && styles.optionOn]}>
+              <Text tone={tpo === value ? 'onAccent' : 'primary'} variant="title">
+                {value}
               </Text>
-              <Text tone="secondary" variant="body">
-                낮에는 가볍고, 저녁 일교차에는 {outer ? `${outer.name}을 더하기` : '얇은 아우터 더하기'} 좋은 조합이에요.
-              </Text>
-            </View>
-            <View style={styles.actions}>
-              <Button label="이 코디 입기" onPress={onWear} />
-              <Button label="다른 코디" onPress={() => setOutfitIndex(outfitIndex + 1)} variant="text" />
-            </View>
-          </View>
-        ) : (
-          <View style={styles.empty}>
-            <PenDrawing name="hanger" size={160} />
-            <Text variant="heading">코디를 만들 옷이 아직 부족해요.</Text>
-            <Text tone="secondary" variant="body">
-              상의와 하의를 한 벌씩 더하면 바로 골라드릴게요.
-            </Text>
-            <View style={styles.actions}>
-              <Button label="옷 가져오기" onPress={onImport} />
-              <Button label="옷장 보기" onPress={onOpenCloset} variant="text" />
-            </View>
-          </View>
-        )}
+            </Pressable>
+          ))}
+        </View>
+      </Sheet>
 
-        {wearCount > 0 ? (
-          <View accessibilityLabel={`이번 주 ${wearCount}번 입었어요`} accessible style={styles.week}>
-            <Text variant="title">이번 주 {wearCount}번 입었어요.</Text>
-            <View style={styles.days}>
-              {weekdays.map((day, index) => (
-                <View key={day} style={styles.day}>
-                  <View style={[styles.dayPlane, index < wearCount && styles.dayPlaneOn]} />
-                  <Text tone="tertiary" variant="caption">
-                    {day}
-                  </Text>
-                </View>
-              ))}
-            </View>
-          </View>
-        ) : null}
-      </ScreenScroll>
+      <ItemInfoSheet
+        item={pickedItem}
+        onClose={() => setPickedItem(null)}
+        onOpenDetail={(id) => {
+          setPickedItem(null);
+          onOpenItem(id);
+        }}
+      />
     </>
   );
 }
 
 const styles = StyleSheet.create((theme) => ({
-  choices: { marginTop: theme.space.lg },
-  outfit: { marginTop: theme.space.xl },
-  caption: { gap: theme.space.xs, marginTop: theme.space.md, maxWidth: 420 },
-  actions: {
+  fill: { flex: 1 },
+  controls: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: theme.space.md,
-    marginTop: theme.space.xl,
+    justifyContent: 'space-between',
+    paddingHorizontal: theme.space.lg,
   },
-  empty: { marginTop: theme.space.section, gap: theme.space.md },
-  week: {
-    marginTop: theme.space.section,
-    paddingTop: theme.space.xl,
-    borderTopWidth: theme.stroke.hairline,
-    borderTopColor: theme.colors.borderInteractive,
-    gap: theme.space.lg,
+  control: {
+    minHeight: theme.touch.min,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: theme.space.sm,
+    paddingHorizontal: theme.space.sm,
   },
-  days: { flexDirection: 'row', gap: theme.space.lg },
-  day: { alignItems: 'center', gap: theme.space.xs },
-  dayPlane: {
-    width: 16,
-    height: 16,
-    borderWidth: theme.stroke.base,
-    borderColor: theme.colors.borderInteractive,
+  pips: { flexDirection: 'row', gap: theme.space.xs },
+  pip: { width: 6, height: 6, backgroundColor: theme.colors.borderInteractive },
+  pipOn: { backgroundColor: theme.colors.accent },
+  headline: { paddingHorizontal: theme.space.xl, paddingTop: theme.space.md },
+  actionBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: theme.space.sm,
+    paddingHorizontal: theme.space.xl,
+    paddingTop: theme.space.md,
+    paddingBottom: theme.space.md,
   },
-  dayPlaneOn: { backgroundColor: theme.colors.textPrimary, borderColor: theme.colors.textPrimary },
+  primary: { flex: 1 },
+  empty: { flex: 1, paddingHorizontal: theme.space.xl, paddingTop: theme.space.section, gap: theme.space.md },
+  emptyActions: { flexDirection: 'row', alignItems: 'center', gap: theme.space.md, marginTop: theme.space.xl },
+  options: { gap: theme.space.xs },
+  option: { minHeight: theme.touch.button, justifyContent: 'center', paddingHorizontal: theme.space.lg },
+  optionOn: { backgroundColor: theme.colors.accent },
 }));

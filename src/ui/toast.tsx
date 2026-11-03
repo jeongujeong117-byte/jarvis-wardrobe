@@ -26,7 +26,8 @@ const styles = StyleSheet.create((theme) => ({
     position: 'absolute',
     left: theme.space.xl,
     right: theme.space.xl,
-    bottom: theme.space.lg,
+    // Top, never bottom: the bottom edge belongs to the action bar and must stay tappable.
+    top: theme.space.xxl + theme.space.xl,
     alignItems: 'center',
   },
   toast: {
@@ -35,7 +36,6 @@ const styles = StyleSheet.create((theme) => ({
     gap: theme.space.sm,
     minHeight: theme.touch.min,
     paddingHorizontal: theme.space.xl,
-    borderRadius: theme.radius.pill,
     backgroundColor: theme.colors.inverse,
   },
 }));

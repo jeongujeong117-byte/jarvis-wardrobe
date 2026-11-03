@@ -2,11 +2,10 @@ import { Pressable, View } from 'react-native';
 import { StyleSheet } from 'react-native-unistyles';
 
 import { Text } from '../text';
-import { PenDrawing } from './pen-drawing';
 
 /**
- * A choice marked the way you would on paper: the selected word is circled in pen.
- * No pill, no fill — the hand does the selecting.
+ * A choice in the magazine style: the selected one is a solid ink rectangle, the others are
+ * words only. No stroke, no rounded corners. (File keeps its old path/name so imports still work.)
  */
 export function PenChoice({
   label,
@@ -17,25 +16,21 @@ export function PenChoice({
   selected: boolean;
   onPress: () => void;
 }) {
+  styles.useVariants({ selected });
   return (
     <Pressable
       accessibilityRole="button"
       accessibilityState={{ selected }}
       onPress={onPress}
       style={({ pressed }) => [styles.choice, pressed && styles.pressed]}>
-      {selected ? (
-        <View pointerEvents="none" style={styles.circle}>
-          <PenDrawing height="100%" name="circle" stretch width="100%" />
-        </View>
-      ) : null}
-      <Text tone={selected ? 'primary' : 'tertiary'} variant="label">
+      <Text tone={selected ? 'onAccent' : 'secondary'} variant="label">
         {label}
       </Text>
     </Pressable>
   );
 }
 
-/** A row of choices, aligned so the first word sits on the text column. */
+/** A row of choices. */
 export function PenChoiceRow({ children }: { children: React.ReactNode }) {
   return <View style={styles.row}>{children}</View>;
 }
@@ -44,22 +39,21 @@ const styles = StyleSheet.create((theme) => ({
   row: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    marginHorizontal: -theme.space.md,
     rowGap: theme.space.xs,
+    columnGap: 0,
   },
   choice: {
     minHeight: theme.touch.min,
     minWidth: theme.touch.min,
-    paddingHorizontal: theme.space.md,
+    paddingHorizontal: theme.space.md - 2,
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  circle: {
-    position: 'absolute',
-    top: 4,
-    bottom: 4,
-    left: 2,
-    right: 2,
+    variants: {
+      selected: {
+        true: { backgroundColor: theme.colors.accent },
+        false: { backgroundColor: 'transparent' },
+      },
+    },
   },
   pressed: { opacity: 0.6 },
 }));

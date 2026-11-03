@@ -26,8 +26,8 @@ const styles = StyleSheet.create((theme) => ({
   field: { gap: theme.space.xs },
   input: {
     minHeight: 48,
-    borderBottomWidth: theme.stroke.base,
-    borderBottomColor: theme.colors.borderInteractive,
+    backgroundColor: theme.colors.surfaceSunken,
+    paddingHorizontal: theme.space.md,
     color: theme.colors.textPrimary,
     fontFamily: theme.type.body.fontFamily,
     fontSize: 17,

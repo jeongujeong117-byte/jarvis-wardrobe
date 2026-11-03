@@ -21,15 +21,14 @@ export const space = {
 } as const;
 
 /**
- * Two shapes only:
- * - none:  every color plane and garment — flat, square, modernist
- * - pill:  the one primary action per screen
- * Sheets use the platform's top rounding (sheet).
+ * Magazine rule: no rounded corners anywhere. Every plane, button, sheet and photo is a
+ * rectangle. The `sheet` and `pill` keys are kept (all 0) so existing components still
+ * compile; new code should use `none`.
  */
 export const radius = {
   none: 0,
-  sheet: 16,
-  pill: 999,
+  sheet: 0,
+  pill: 0,
 } as const;
 
 export const stroke = {
@@ -49,6 +48,8 @@ export const fontFamily = {
   regular: 'Pretendard-Regular',
   medium: 'Pretendard-Medium',
   script: 'MrsSaintDelafield',
+  /** Magazine masthead ("JARVIS") only. */
+  masthead: 'BodoniModa-Bold',
 } as const;
 
 /**
@@ -63,6 +64,7 @@ export const type = {
   label: { fontFamily: fontFamily.medium, fontSize: 14, lineHeight: 20, letterSpacing: -0.1 },
   caption: { fontFamily: fontFamily.regular, fontSize: 12, lineHeight: 17, letterSpacing: 0 },
   script: { fontFamily: fontFamily.script, fontSize: 40, lineHeight: 52, letterSpacing: 0 },
+  masthead: { fontFamily: fontFamily.masthead, fontSize: 26, lineHeight: 32, letterSpacing: 4 },
 } as const satisfies Record<string, TextStyle>;
 
 export type TypeVariant = keyof typeof type;

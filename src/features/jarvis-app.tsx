@@ -16,6 +16,7 @@ import { Toast } from '@/ui/toast';
 import { AuthSheet } from './account/auth-sheet';
 import { AddItemSheet } from './closet/add-item-sheet';
 import { ClosetScreen } from './main/closet';
+import { ItemDetailScreen } from './main/item-detail';
 import { MyScreen } from './main/my';
 import { TodayScreen } from './main/today';
 import { CaptureScreen } from './onboarding/capture';
@@ -41,6 +42,8 @@ export function JarvisApp() {
   const [tpo, setTpo] = useState('일상');
   const [outfitIndex, setOutfitIndex] = useState(0);
   const [wearCount, setWearCount] = useState(0);
+  const [worn, setWorn] = useState(false);
+  const [detailId, setDetailId] = useState<string | null>(null);
   const [showAdd, setShowAdd] = useState(false);
   const [showAuth, setShowAuth] = useState(false);
   const [toast, setToast] = useState('');
@@ -91,6 +94,11 @@ export function JarvisApp() {
     const timer = setTimeout(() => setToast(''), 2200);
     return () => clearTimeout(timer);
   }, [toast]);
+
+  const unwear = () => {
+    setWorn(false);
+    setWearCount((count) => Math.max(0, count - 1));
+  };
 
   const importSelectedItems = () => {
     const imported = gmailItems.filter((item) => selectedIds.has(item.id));
@@ -184,6 +192,15 @@ export function JarvisApp() {
     );
   }
 
+  const detailItem = detailId ? items.find((item) => item.id === detailId) : undefined;
+  if (detailItem) {
+    return (
+      <Screen>
+        <ItemDetailScreen item={detailItem} onBack={() => setDetailId(null)} />
+      </Screen>
+    );
+  }
+
   return (
     <Screen bottomInset={false}>
       <View style={styles.content}>
@@ -192,15 +209,21 @@ export function JarvisApp() {
             items={items}
             onImport={() => setScreen('import')}
             onOpenCloset={() => setActiveTab('closet')}
+            onOpenItem={(id) => setDetailId(id)}
+            onOtherOutfit={() => {
+              // Picking another outfit cancels today's "worn" record so the count never double-counts.
+              if (worn) unwear();
+              setOutfitIndex(outfitIndex + 1);
+            }}
+            onUnwear={unwear}
             onWear={() => {
+              setWorn(true);
               setWearCount((count) => count + 1);
-              setToast('오늘의 코디로 기록했어요');
             }}
             outfitIndex={outfitIndex}
-            setOutfitIndex={setOutfitIndex}
             setTpo={setTpo}
             tpo={tpo}
-            wearCount={wearCount}
+            worn={worn}
           />
         ) : null}
         {activeTab === 'closet' ? (
@@ -209,6 +232,7 @@ export function JarvisApp() {
             items={items}
             onAdd={() => setShowAdd(true)}
             onImport={() => setScreen('import')}
+            onOpenItem={(id) => setDetailId(id)}
             setFilter={setFilter}
           />
         ) : null}

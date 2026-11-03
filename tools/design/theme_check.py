@@ -11,14 +11,14 @@ def cr(a,b):
     la,lb=L(a),L(b); hi,lo=max(la,lb),min(la,lb); return (hi+0.05)/(lo+0.05)
 
 THEMES = {
- "light": dict(base="#FBFBF9", sunken="#F1F2F4", raised="#FFFFFF",
-   primary="#1F2A44", secondary="#5D6577", tertiary="#666E80",
-   interactive="#8A91A1", accent="#1F2A44", onAccent="#FBFBF9", seal="#C2412D",
-   inverse="#1F2A44", onInverse="#FBFBF9"),
- "dark": dict(base="#121725", sunken="#0C101A", raised="#1A2030",
-   primary="#ECEEF2", secondary="#A6ADBB", tertiary="#959CAB",
-   interactive="#687083", accent="#ECEEF2", onAccent="#121725", seal="#F08A74",
-   inverse="#ECEEF2", onInverse="#121725"),
+ "light": dict(base="#EFEBE5", sunken="#E2DCD3", raised="#FBFAF8",
+   primary="#161514", secondary="#5C5852", tertiary="#6B665F",
+   interactive="#8A847B", accent="#161514", onAccent="#F6F3EE", seal="#7A1E2B",
+   inverse="#161514", onInverse="#F6F3EE"),
+ "dark": dict(base="#12110F", sunken="#0A0A09", raised="#1C1B19",
+   primary="#F3F1EC", secondary="#A9A59E", tertiary="#9A968F",
+   interactive="#6E6A63", accent="#F3F1EC", onAccent="#12110F", seal="#E8998C",
+   inverse="#F3F1EC", onInverse="#12110F"),
 }
 checks = [
  ("primary/base","primary","base",4.5), ("primary/raised","primary","raised",4.5),
