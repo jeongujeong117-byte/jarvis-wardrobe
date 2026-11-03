@@ -23,6 +23,7 @@ const styles = StyleSheet.create((theme) => ({
   text: {
     variants: {
       variant: {
+        headline: theme.type.headline,
         display: theme.type.display,
         heading: theme.type.heading,
         title: theme.type.title,

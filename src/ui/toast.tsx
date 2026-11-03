@@ -21,13 +21,13 @@ export function Toast({ message }: { message: string }) {
   );
 }
 
-const styles = StyleSheet.create((theme) => ({
+const styles = StyleSheet.create((theme, rt) => ({
   wrap: {
     position: 'absolute',
     left: theme.space.xl,
     right: theme.space.xl,
-    // Top, never bottom: the bottom edge belongs to the action bar and must stay tappable.
-    top: theme.space.xxl + theme.space.xl,
+    // Sits just above the floating bar, so it never covers a button.
+    bottom: rt.insets.bottom + 64 + theme.space.md + theme.space.lg + theme.space.sm,
     alignItems: 'center',
   },
   toast: {

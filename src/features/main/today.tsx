@@ -1,17 +1,17 @@
 /**
- * Today = today's issue of the magazine. The cover is the outfit; turning pages sideways
- * brings the weather report, the on-body look, the credits (what you wear) and the PLUS page.
- * The action bar stays fixed below every page.
+ * Today = today's issue of the magazine. The cover is the outfit worn; turning pages sideways
+ * brings the weather report, the flat-lay with product tags, the credits (what you wear) and
+ * the PLUS page. One floating bar over every page holds the actions and the way to the other tabs.
  */
-import { ChevronRight } from 'lucide-react-native';
+import { Check, List, Shirt, Shuffle, User } from 'lucide-react-native';
 import { useRef, useState } from 'react';
 import { Alert, type LayoutChangeEvent, Pressable, ScrollView, View } from 'react-native';
-import { StyleSheet } from 'react-native-unistyles';
+import { StyleSheet, UnistylesRuntime } from 'react-native-unistyles';
 
 import { aiOutfitFor } from '@/data/photos';
 import type { ClothingItem } from '@/data/wardrobe';
 import { Button } from '@/ui/button';
-import { Icon } from '@/ui/icon';
+import { type BarSlot, FloatingBar, type Tab } from '@/ui/floating-bar';
 import { Sheet } from '@/ui/sheet';
 import { Text } from '@/ui/text';
 import { TopBar } from '@/ui/top-bar';
@@ -63,13 +63,6 @@ function issueOf(date: Date) {
 }
 
 type PageKey = 'cover' | 'weather' | 'look' | 'credits' | 'mine';
-const pageNames: Record<PageKey, string> = {
-  cover: '표지',
-  weather: '날씨',
-  look: '착용 컷',
-  credits: '크레딧',
-  mine: '내 사진',
-};
 
 export function TodayScreen({
   items,
@@ -83,6 +76,7 @@ export function TodayScreen({
   onImport,
   onOpenCloset,
   onOpenItem,
+  onNavigate,
   page,
   setPage,
 }: {
@@ -97,6 +91,7 @@ export function TodayScreen({
   onImport: () => void;
   onOpenCloset: () => void;
   onOpenItem: (id: string) => void;
+  onNavigate: (tab: Tab) => void;
   /** Kept by the app so returning from an item's detail lands on the same page of the issue. */
   page: number;
   setPage: (page: number) => void;
@@ -105,6 +100,8 @@ export function TodayScreen({
   const [showOccasions, setShowOccasions] = useState(false);
   const [pickedItem, setPickedItem] = useState<ClothingItem | null>(null);
   const scroller = useRef<ScrollView>(null);
+  // The cover bleeds under the status bar, so the pages are laid out from the very top.
+  const topInset = UnistylesRuntime.insets.top;
 
   // Selection rules unchanged from the prototype.
   const tops = items.filter((item) => item.category === '상의');
@@ -131,6 +128,7 @@ export function TodayScreen({
             <Button label="옷장 보기" onPress={onOpenCloset} variant="text" />
           </View>
         </View>
+        <FloatingBar groups={[navSlots(onNavigate)]} />
       </>
     );
   }
@@ -138,13 +136,15 @@ export function TodayScreen({
   const pieces = [top, bottom, outer, shoes].filter((piece): piece is ClothingItem => Boolean(piece));
   const ai = aiOutfitFor(top, bottom);
   const pages: PageKey[] = ai ? ['cover', 'weather', 'look', 'credits', 'mine'] : ['cover', 'weather', 'credits', 'mine'];
+  const total = String(pages.length).padStart(2, '0');
   const numberOf = (key: PageKey) => String(pages.indexOf(key) + 1).padStart(2, '0');
+  const counterOf = (key: PageKey) => `${numberOf(key)} / ${total}`;
   const issue = issueOf(new Date());
 
   const teasers: Teaser[] = [
-    { number: numberOf('weather'), label: `날씨 ${sampleWeather.now}° ${sampleWeather.sky}`, page: pages.indexOf('weather') },
-    ...(ai ? [{ number: numberOf('look'), label: '착용 컷', page: pages.indexOf('look') }] : []),
-    { number: numberOf('credits'), label: `오늘 입는 옷 ${pieces.length}벌`, page: pages.indexOf('credits') },
+    { number: numberOf('weather'), label: `날씨 ${sampleWeather.now}°`, page: pages.indexOf('weather') },
+    ...(ai ? [{ number: numberOf('look'), label: '코디 컷', page: pages.indexOf('look') }] : []),
+    { number: numberOf('credits'), label: `입는 옷 ${pieces.length}벌`, page: pages.indexOf('credits') },
   ];
 
   const current = Math.min(page, pages.length - 1);
@@ -165,11 +165,30 @@ export function TodayScreen({
   const pickMyPhoto = () =>
     Alert.alert('데모 안내', '내 사진 고르기는 PLUS 기능이에요. 실제 연결은 다음 단계에서 해요.');
 
-  const nextKey = pages[current + 1];
+  const actions: BarSlot[] = [
+    {
+      key: 'wear',
+      label: worn ? '입는 중' : '입기',
+      a11yLabel: worn ? '오늘 입는 중, 취소하려면 누르세요' : '이 코디 입기',
+      icon: Check,
+      active: worn,
+      onPress: worn ? onUnwear : onWear,
+    },
+    {
+      key: 'other',
+      label: '다른 코디',
+      icon: Shuffle,
+      onPress: () => {
+        goTo(0);
+        onOtherOutfit();
+      },
+    },
+    { key: 'credits', label: '입는 옷', icon: List, onPress: () => goTo(pages.indexOf('credits')) },
+  ];
 
   return (
-    <>
-      <View onLayout={onLayout} style={styles.stage}>
+    <View style={styles.root}>
+      <View onLayout={onLayout} style={[styles.stage, { marginTop: -topInset }]}>
         {box.w > 0 ? (
           <ScrollView
             horizontal
@@ -182,76 +201,48 @@ export function TodayScreen({
             scrollEventThrottle={32}
             showsHorizontalScrollIndicator={false}>
             {pages.map((key) => {
-              const number = numberOf(key);
               if (key === 'cover') {
                 return (
                   <CoverPage
                     box={box}
-                    cut={ai?.flatlay}
-                    headline="오늘은 가볍게."
+                    counter={`${counterOf('cover')} · 이번 호`}
+                    cut={ai?.model}
+                    headline={'오늘은\n가볍게.'}
                     issueLabel={issue.label}
                     issueLine={issue.line}
                     key={key}
+                    lead={'낮엔 셔츠 한 장,\n저녁엔 윈드 재킷.'}
                     occasion={tpo}
                     onOccasion={() => setShowOccasions(true)}
                     onTeaser={goTo}
                     pieces={pieces}
                     teasers={teasers}
+                    topInset={topInset}
                   />
                 );
               }
               if (key === 'weather') {
-                return <WeatherPage box={box} key={key} number={number} outer={outer} weather={sampleWeather} />;
+                return (
+                  <WeatherPage box={box} counter={counterOf(key)} key={key} outer={outer} topInset={topInset} weather={sampleWeather} />
+                );
               }
               if (key === 'look' && ai) {
-                return <LookPage box={box} cut={ai.model} key={key} number={number} onPick={setPickedItem} pieces={pieces} />;
+                return (
+                  <LookPage box={box} counter={counterOf(key)} cut={ai.flatlay} key={key} onPick={setPickedItem} pieces={pieces} topInset={topInset} />
+                );
               }
               if (key === 'credits') {
                 return (
-                  <CreditsPage aiPhoto={Boolean(ai)} box={box} key={key} number={number} onOpen={onOpenItem} pieces={pieces} />
+                  <CreditsPage aiPhoto={Boolean(ai)} box={box} counter={counterOf(key)} key={key} onOpen={onOpenItem} pieces={pieces} topInset={topInset} />
                 );
               }
-              return <MinePage box={box} key={key} number={number} onPick={pickMyPhoto} />;
+              return <MinePage box={box} counter={counterOf(key)} key={key} onPick={pickMyPhoto} topInset={topInset} />;
             })}
           </ScrollView>
         ) : null}
       </View>
 
-      {/* Folio: where you are in the issue, and the way to the next page. */}
-      <View style={styles.folio}>
-        <Text
-          accessibilityLabel={`${pages.length}쪽 중 ${current + 1}쪽, ${pageNames[pages[current] ?? 'cover']}`}
-          tone="secondary"
-          variant="caption">
-          {String(current + 1).padStart(2, '0')} / {String(pages.length).padStart(2, '0')} · {pageNames[pages[current] ?? 'cover']}
-        </Text>
-        <Pressable
-          accessibilityLabel={nextKey ? `다음 쪽, ${pageNames[nextKey]}` : '표지로 돌아가기'}
-          accessibilityRole="button"
-          onPress={() => goTo(nextKey ? current + 1 : 0)}
-          style={styles.folioNext}>
-          <Text variant="label">{nextKey ? pageNames[nextKey] : '표지로'}</Text>
-          <Icon icon={ChevronRight} size={16} />
-        </Pressable>
-      </View>
-
-      <View style={styles.actionBar}>
-        <View style={styles.primary}>
-          {worn ? (
-            <Button block label="오늘 입는 중 · 취소" onPress={onUnwear} variant="quiet" />
-          ) : (
-            <Button block label="이 코디 입기" onPress={onWear} />
-          )}
-        </View>
-        <Button
-          label="다른 코디"
-          onPress={() => {
-            goTo(0);
-            onOtherOutfit();
-          }}
-          variant="text"
-        />
-      </View>
+      <FloatingBar groups={[actions, navSlots(onNavigate)]} />
 
       <Sheet onClose={() => setShowOccasions(false)} title="오늘의 일정" visible={showOccasions}>
         <View style={styles.options}>
@@ -281,34 +272,21 @@ export function TodayScreen({
           onOpenItem(id);
         }}
       />
-    </>
+    </View>
   );
 }
 
+/** Today's bar only shows the other two tabs: you are already on Today. */
+function navSlots(onNavigate: (tab: Tab) => void): BarSlot[] {
+  return [
+    { key: 'closet', label: '옷장', icon: Shirt, dim: true, onPress: () => onNavigate('closet') },
+    { key: 'my', label: '마이', icon: User, dim: true, onPress: () => onNavigate('my') },
+  ];
+}
+
 const styles = StyleSheet.create((theme) => ({
-  stage: { flex: 1, minHeight: 240 },
-  folio: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingLeft: theme.space.xl,
-    paddingRight: theme.space.md,
-  },
-  folioNext: {
-    minHeight: theme.touch.min,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 2,
-    paddingHorizontal: theme.space.sm,
-  },
-  actionBar: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: theme.space.sm,
-    paddingHorizontal: theme.space.xl,
-    paddingBottom: theme.space.sm,
-  },
-  primary: { flex: 1 },
+  root: { flex: 1 },
+  stage: { flex: 1 },
   empty: { flex: 1, paddingHorizontal: theme.space.xl, paddingTop: theme.space.section, gap: theme.space.md },
   emptyActions: { flexDirection: 'row', alignItems: 'center', gap: theme.space.md, marginTop: theme.space.xl },
   options: { gap: theme.space.xs },

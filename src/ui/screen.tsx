@@ -68,7 +68,7 @@ const styles = StyleSheet.create((theme, rt) => ({
     alignSelf: 'center',
     paddingHorizontal: theme.space.xl,
     paddingTop: theme.space.lg,
-    paddingBottom: theme.space.hero,
+    paddingBottom: theme.space.hero * 2,
     variants: {
       width: {
         readable: { maxWidth: theme.layout.readable },

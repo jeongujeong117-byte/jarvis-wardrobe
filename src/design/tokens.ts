@@ -57,6 +57,7 @@ export const fontFamily = {
  * `script` is decorative only — never used for information a person must read to act.
  */
 export const type = {
+  headline: { fontFamily: fontFamily.medium, fontSize: 26, lineHeight: 34, letterSpacing: -0.6 },
   display: { fontFamily: fontFamily.medium, fontSize: 30, lineHeight: 39, letterSpacing: -0.8 },
   heading: { fontFamily: fontFamily.medium, fontSize: 20, lineHeight: 28, letterSpacing: -0.4 },
   title: { fontFamily: fontFamily.medium, fontSize: 16, lineHeight: 22, letterSpacing: -0.2 },

@@ -30,6 +30,8 @@ type Palette = {
   inverse: string;
   onInverse: string;
   scrim: string;
+  /** Floating bar: translucent surface laid over the blur */
+  barTint: string;
 };
 
 const shared = { space, radius, stroke, touch, type, motion, layout } as const;
@@ -52,6 +54,7 @@ export const lightTheme = makeTheme('light', false, {
   inverse: '#161514',
   onInverse: '#F6F3EE',
   scrim: 'rgba(22,21,20,0.40)',
+  barTint: 'rgba(251,250,248,0.72)',
 });
 
 export const darkTheme = makeTheme('dark', true, {
@@ -69,6 +72,7 @@ export const darkTheme = makeTheme('dark', true, {
   inverse: '#F3F1EC',
   onInverse: '#12110F',
   scrim: 'rgba(5,5,4,0.6)',
+  barTint: 'rgba(28,27,25,0.72)',
 });
 
 export const appThemes = { light: lightTheme, dark: darkTheme } as const;

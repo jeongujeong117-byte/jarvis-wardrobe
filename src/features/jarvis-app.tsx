@@ -10,7 +10,7 @@ import { captureItem, categories, type ClothingItem, gmailItems } from '@/data/w
 import { isSupabaseConfigured, supabase } from '@/lib/supabase';
 import { createClothingItem, loadClothingItems } from '@/services/clothing-items';
 import { Screen } from '@/ui/screen';
-import { TabBar, type TabItem } from '@/ui/tab-bar';
+import { FloatingBar, tabSlots } from '@/ui/floating-bar';
 import { Toast } from '@/ui/toast';
 
 import { AuthSheet } from './account/auth-sheet';
@@ -26,12 +26,6 @@ import { ResultsScreen } from './onboarding/results';
 import { ScanningScreen } from './onboarding/scanning';
 import { WelcomeScreen } from './onboarding/welcome';
 import type { DataStatus, FlowScreen, MainTab } from './types';
-
-const tabs: TabItem<MainTab>[] = [
-  { key: 'today', label: '오늘' },
-  { key: 'closet', label: '옷장' },
-  { key: 'my', label: '마이' },
-];
 
 export function JarvisApp() {
   const [screen, setScreen] = useState<FlowScreen>('welcome');
@@ -210,6 +204,7 @@ export function JarvisApp() {
             items={items}
             onImport={() => setScreen('import')}
             onOpenCloset={() => setActiveTab('closet')}
+            onNavigate={setActiveTab}
             onOpenItem={(id) => setDetailId(id)}
             onOtherOutfit={() => {
               // Picking another outfit cancels today's "worn" record so the count never double-counts.
@@ -251,7 +246,7 @@ export function JarvisApp() {
         <Toast message={toast} />
       </View>
 
-      <TabBar active={activeTab} items={tabs} onChange={setActiveTab} />
+      {activeTab !== 'today' ? <FloatingBar groups={[tabSlots(activeTab, setActiveTab)]} /> : null}
 
       <AuthSheet
         onAuthenticated={() => {
