@@ -44,6 +44,7 @@ export function JarvisApp() {
   const [wearCount, setWearCount] = useState(0);
   const [worn, setWorn] = useState(false);
   const [detailId, setDetailId] = useState<string | null>(null);
+  const [issuePage, setIssuePage] = useState(0);
   const [showAdd, setShowAdd] = useState(false);
   const [showAuth, setShowAuth] = useState(false);
   const [toast, setToast] = useState('');
@@ -216,6 +217,8 @@ export function JarvisApp() {
               setOutfitIndex(outfitIndex + 1);
             }}
             onUnwear={unwear}
+            page={issuePage}
+            setPage={setIssuePage}
             onWear={() => {
               setWorn(true);
               setWearCount((count) => count + 1);

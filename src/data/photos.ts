@@ -15,29 +15,31 @@ export const itemPhotos: Record<string, ImageSource> = {
   'gmail-6': require('../../assets/images/wardrobe/gmail-6.jpg'),
 };
 
-export type PhotoMode = 'flatlay' | 'model' | 'mine';
-
-export const photoModes: { key: PhotoMode; label: string }[] = [
-  { key: 'flatlay', label: '코디 컷' },
-  { key: 'model', label: '착용 컷' },
-  { key: 'mine', label: '내 사진' },
-];
-
 /** Tag position in percent of the 4:5 photo. `flip` puts the label on the left of the dot. */
 export type PhotoTag = { itemId: string; x: number; y: number; flip?: boolean };
 
 export type AiCut = {
   image: ImageSource;
-  /** Average edge color of the AI image — the stage behind it uses it so the photo has no visible seam. */
+  /** Pixel size of the source image — needed to place tags when the photo is cropped to fill. */
+  size: { w: number; h: number };
+  /** Average color of the image, shown while it loads. */
   background: string;
+  /** Text printed over this photo: light on dark photos, ink on light photos. */
+  textOn: 'light' | 'dark';
   tags: PhotoTag[];
 };
+
+/** Fixed colors for type printed over photos (they do not follow light/dark mode). */
+export const overPhotoInk = { light: '#F6F3EE', dark: '#161514' } as const;
 
 export type AiOutfit = { flatlay: AiCut; model: AiCut };
 
 const aiFlatlay: AiCut = {
   image: require('../../assets/images/wardrobe/ai-flatlay.jpg'),
+  size: { w: 800, h: 1000 },
   background: '#948B7B',
+  // Ink reads on both the taupe floor and the white shirt; light type vanished on the shirt.
+  textOn: 'dark',
   tags: [
     { itemId: 'gmail-1', x: 50, y: 16 },
     { itemId: 'gmail-4', x: 53, y: 62 },
@@ -47,7 +49,9 @@ const aiFlatlay: AiCut = {
 
 const aiModel: AiCut = {
   image: require('../../assets/images/wardrobe/ai-model.jpg'),
+  size: { w: 800, h: 1000 },
   background: '#B9B9BB',
+  textOn: 'dark',
   tags: [
     { itemId: 'gmail-5', x: 36, y: 42, flip: true },
     { itemId: 'gmail-1', x: 50, y: 30 },
